@@ -1,0 +1,28 @@
+{
+  "name": "kami-lib",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist",
+  "types": "dist",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsc --project ./tsconfig.json --watch",
+    "clean": "rm -rf ./dist",
+    "clean:all": "rm -rf ./node_modules ./dist package-lock.json",
+    "build": "tsc --project ./tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/puppeteer": "^5.4.4",
+    "typescript": "^4.4.4"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@nestjs/axios": "^0.0.3",
+    "axios": "^0.24.0",
+    "nest-puppeteer": "^1.1.1",
+    "reflect-metadata": "^0.1.13",
+    "tsyringe": "^4.6.0"
+  }
+}

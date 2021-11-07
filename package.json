@@ -1,0 +1,13 @@
+{
+  "name": "kami",
+  "private": true,
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  },
+  "scripts": {
+    "postinstall": "lerna bootstrap --hoist",
+    "build": "lerna run build",
+    "clean": "learna run clean",
+    "clean:all": "rm -rf package-lock.json ./node_modules && lerna run clean:all"
+  }
+}
