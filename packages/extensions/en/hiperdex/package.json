@@ -1,0 +1,29 @@
+{
+  "name": "kami-extension-hiperdex",
+  "version": "1.0.0",
+  "description": "Hiperdex extension for Kami",
+  "main": "./dist",
+  "types": "./dist",
+  "dependencies": {
+    "kami-lib": "1.0.0",
+    "reflect-metadata": "^0.1.13",
+    "faker": "^5.5.3"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.4",
+    "@types/faker": "^5.5.9",
+    "tsyringe": "^4.6.0"
+  },
+  "peerDependencies": {
+    "tsyringe": "^4.6.0"
+  },
+  "scripts": {
+    "dev": "tsc --project tsconfig.json --watch",
+    "clean": "rm -rf ./dist",
+    "clean:all": "rm -rf ./node_modules ./dist package-lock.json",
+    "build": "tsc --project tsconfig.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

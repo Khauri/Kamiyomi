@@ -4,7 +4,7 @@ import {Publication, PublicationSource} from 'kami-lib';
 import {Dependencies, Injectable} from '@nestjs/common';
 import {container} from 'tsyringe';
 
-import ExampleSource from 'kami-extension-example';
+import ExampleSource from 'kami-extension-hiperdex';
 
 @Injectable()
 export class SourcesService {

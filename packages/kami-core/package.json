@@ -20,6 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "@nestjs/axios": "^0.0.3",
+    "node-html-parser": "^5.1.0",
     "axios": "^0.24.0",
     "nest-puppeteer": "^1.1.1",
     "reflect-metadata": "^0.1.13",
