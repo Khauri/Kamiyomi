@@ -1,29 +1,39 @@
 import 'reflect-metadata';
+import * as path from 'path';
+import { Publication, PublicationSource } from 'kami-lib';
+import { Injectable } from '@nestjs/common';
 
-import {Publication, PublicationSource} from 'kami-lib';
-import {Dependencies, Injectable} from '@nestjs/common';
-import {container} from 'tsyringe';
-
-import ExampleSource from 'kami-extension-hiperdex';
-
+import { ExtensionsManager, ExtensionType } from '../extensions';
 @Injectable()
 export class SourcesService {
   private pubMap: Map<string, Publication> = new Map();
 
-  private sourceMap: Map<string, PublicationSource> = new Map();
+  private extensionsManager: ExtensionsManager;
 
   constructor() {
-    // TODO: dynamically import sources from a sources directory
-    const instance = container.resolve(ExampleSource);
-    this.sourceMap.set(instance.name, instance);
+    this.extensionsManager = new ExtensionsManager();
+    this.bootstrap();
+  }
+
+  private async bootstrap() {
+    await this.extensionsManager.watchDirectory(
+      // TODO: Grab this from .env or command line
+      path.resolve(__dirname, '../../../extensions/en'),
+    );
   }
 
   getSources(): PublicationSource[] {
-    return [...this.sourceMap.values()];
+    return this.extensionsManager
+      .getExtensionsByType(ExtensionType.PUBLICATION_SOURCE)
+      .map((ext) => ext.instance);
   }
 
   getSourceByName(name: string): PublicationSource {
-    return this.sourceMap.get(name);
+    const extension = this.extensionsManager.getExtensionByName(name);
+    if (extension.type !== ExtensionType.PUBLICATION_SOURCE) {
+      throw new Error('Extension is not a source');
+    }
+    return extension.instance;
   }
 
   getPublicationById(id): Publication {

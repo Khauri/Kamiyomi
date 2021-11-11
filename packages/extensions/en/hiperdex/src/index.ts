@@ -20,7 +20,7 @@ class HiperdexSource implements PublicationSource {
 
   private baseUrl: string = 'https://hiperdex.com';
 
-  getPublicationsFromDocument(document: HTMLElement) {
+  private getPublicationsFromDocument(document: HTMLElement) {
     const els = document.querySelectorAll('.page-item-detail.manga');
     const publications: Publication[] = els.map(el => {
       const title = el.querySelector('a').getAttribute('title');
