@@ -8,6 +8,6 @@
     "postinstall": "lerna bootstrap --hoist",
     "build": "lerna run build",
     "clean": "learna run clean",
-    "clean:all": "rm -rf package-lock.json ./node_modules && lerna run clean:all"
+    "clean:all": "lerna run clean:all && rm -rf package-lock.json ./node_modules"
   }
 }
