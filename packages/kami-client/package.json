@@ -27,7 +27,7 @@
     "build:web": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "clean:all": "rm -rf node_modules build"
+    "clean:all": "rm -rf node_modules build package-lock.json"
   },
   "eslintConfig": {
     "extends": [
