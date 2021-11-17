@@ -48,3 +48,34 @@ At the moment Kamiyomi works best with one server and not more than a few users.
   - This would mean only an admin can install sources, but souces won't have their own dependencies so this should be alright.
 - [ ] Aggressive caching for publication sources
 - [ ] Task queue for background data fetching, web scraping, and coordination in a distributed environment
+
+# Contributing
+
+This is a multi-package repo that uses lerna to hoist dependencies.
+
+First clone the repository:
+
+```sh
+git clone kamiyomi
+cd kamiyomi
+```
+
+Then run
+
+```sh
+npm install
+```
+
+You now need to npm install in the `kami-client` directory if you want to work on the `kami-client` as well.
+
+This is because `kami-client` uses CRA which has different dependencies that can't be hoisted along with the other packages. Hoping to figure out how to fix this at some point.
+
+```sh
+cd packages/kami-client
+npm install
+npm run dev
+```
+
+## Extensions
+
+For instructions on developing extensions, such as a Publication Source extension, see the packages/extensions folder.

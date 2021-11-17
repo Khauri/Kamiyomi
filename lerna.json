@@ -2,8 +2,6 @@
   "packages": [
     "packages/**/*"
   ],
-  "bootstrap": {
-    "ignore": "kami-client"
-  },
+  "ignore": "kami-client",
   "version": "0.0.0"
 }
