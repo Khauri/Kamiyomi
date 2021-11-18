@@ -33,14 +33,11 @@ export class SourcesController {
   }
 
   @Get(':name/popular')
-  async getPopularPublications(
+  getPopularPublications(
     @Param('name') name: string,
-    @Query() cursor : Cursor
+    @Query() cursor: Cursor,
   ) {
-    console.log(cursor);
-    const source = this.sources.getSourceByName(name);
-    const pageInfo = await source.popular({page: 1, perPage: 25, ...cursor});
-    return pageInfo;
+    return this.sources.popular(name, {page:1, perPage: 25, ...cursor});
   }
 
   @Get(':name/search')
@@ -52,35 +49,27 @@ export class SourcesController {
 
   @Get(':name/publications/:pub_id')
   async getPublication(
-    @Param('name') name: string, 
+    @Param('name') name: string,
     @Param('pub_id') pub_id: string,
   ) {
-    const publication = this.sources.getPublicationById(pub_id);
-    const source = this.sources.getSourceByName(name);
-    const details = await source.details(publication);
-    return details;
+    return this.sources.publication(name, pub_id);
   }
 
   @Get(':name/publications/:pub_id/chapters')
   async getPublicationChapters(
-    @Param('name') name: string, 
-    @Param('pub_id') pub_id: string
+    @Param('name') name: string,
+    @Param('pub_id') pub_id: string,
   ) {
-    const publication = this.sources.getPublicationById(pub_id);
-    const source = this.sources.getSourceByName(name);
-    const chapters = await source.chapters(publication);
-    return chapters;
+    return this.sources.chapters(name, pub_id);
   }
 
   @Get(':name/publications/:pub_id/chapters/:chapter')
   async getPublicationChapterPages(
-    @Param('name') name: string, 
-    @Param('pub_id') pub_id: string, 
+    @Param('name') name: string,
+    @Param('pub_id') pub_id: string,
     @Param('chapter') chapter: string,
+    @Query() cursor: Cursor,
   ) {
-    const publication = this.sources.getPublicationById(pub_id);
-    const source = this.sources.getSourceByName(name);
-    const pages = await source.pages(null, publication, {page: 1, perPage: 10});
-    return pages;
+    return this.sources.pages(name, pub_id, chapter, {page: 1, perPage: 25, ...cursor});
   }
 }

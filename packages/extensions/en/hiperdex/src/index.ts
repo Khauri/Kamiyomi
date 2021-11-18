@@ -1,8 +1,10 @@
 import "reflect-metadata";
 import {injectable} from 'tsyringe';
-import {lastValueFrom} from "rxjs";
-import {HTMLElement} from "node-html-parser";
+import {lastValueFrom, Observable} from 'rxjs';
+import {HTMLElement} from 'node-html-parser';
+import {AxiosResponse} from 'axios';
 import {
+  Page,
   Chapter, 
   Cursor, 
   PageInfo, 
@@ -20,6 +22,14 @@ class HiperdexSource implements PublicationSource {
 
   private baseUrl: string = 'https://hiperdex.com';
 
+  private async getDocumentFromURL(url: string, method = 'get'): Promise<HTMLElement> {
+    const req = this.http[method](url) as Observable<AxiosResponse<any, any>>;
+    const response = await lastValueFrom(req);
+    const {data} = response;
+    const document = this.html.parse(data);
+    return document;
+  }
+
   private getPublicationsFromDocument(document: HTMLElement) {
     const els = document.querySelectorAll('.page-item-detail.manga');
     const publications: Publication[] = els.map(el => {
@@ -31,39 +41,74 @@ class HiperdexSource implements PublicationSource {
     return publications;
   }
 
-  async popular(cursor: Cursor): Promise<PageInfo> {
+  private getChaptersFromDocument(document: HTMLElement): Chapter[] {
+    const els = document.querySelectorAll('.wp-manga-chapter');
+    return els.map(el => {
+      return {
+        title: el.querySelector('a').innerText.trim(),
+        id: el.querySelector('a').getAttribute('href'),
+        released: el.querySelector('.chapter-release-date').innerText.trim(), // todo: convert to ISO date
+      }
+    });
+  }
+
+  private getPagesFromDocument(document: HTMLElement): Page[] {
+    const els = document.querySelectorAll('.wp-manga-chapter-img');
+    return els.map(el => {
+      return ({
+        src: el.getAttribute('src').trim(),
+      });
+    });
+  }
+
+  private getPublicationDetailsFromDocument(document: HTMLElement, id: string): Publication {
+    // Chapters need to be loaded asynchronously
+    return {
+      url: id,
+      title: document.querySelector('.post-title').innerText.trim(),
+      thumbnailUrl: document.querySelector('.summary_image img').getAttribute('src'),
+      description: document.querySelector('.summary__content').innerText.trim(),
+      author: document.querySelector('.author-content').innerText.trim(),
+      artist: document.querySelector('.artist-content').innerText.trim(),
+      initialized: false,
+    }
+  }
+
+  async popular(cursor: Cursor): Promise<PageInfo<Publication>> {
     let publications: Publication[] = [];
     let hasNextPage: boolean = true;
     try {
-      const req = this.http.get(`${this.baseUrl}/page/${cursor.page}`)
-      const response = await lastValueFrom(req);
-      const {data} = response;
-
-      const document = this.html.parse(data);
+      const document = await this.getDocumentFromURL(`${this.baseUrl}/page/${cursor.page}`);
       publications = this.getPublicationsFromDocument(document);
     } catch(err) {
       hasNextPage = false;
     }
-    return <PageInfo> {
+    return <PageInfo<Publication>> {
       hasNextPage,
       entries: publications,
     };
   }
 
-  search(query: string, cursor: Cursor): Promise<PageInfo> {
+  search(query: string, cursor: Cursor): Promise<PageInfo<Publication>> {
     throw new Error('Method not implemented.');
   }
 
-  chapters(pub: Publication): Promise<Chapter[]> {
-    throw new Error('Method not implemented.');
+  async chapters(pub: Publication): Promise<Chapter[]> {
+    const document = await this.getDocumentFromURL(`${pub.url}ajax/chapters`, 'post');
+    return this.getChaptersFromDocument(document);
   }
 
-  details(pub: Publication): Promise<Publication> {
-    throw new Error('Method not implemented.');
+  async details(pub: Publication): Promise<Publication> {
+    const document = await this.getDocumentFromURL(pub.url);
+    return this.getPublicationDetailsFromDocument(document, pub.url);
   }
   
-  pages(chapter: Chapter, pub: Publication, cursor: Cursor): Promise<string> {
-    throw new Error('Method not implemented.');
+  async pages(chapter: Chapter, pub: Publication, cursor: Cursor): Promise<PageInfo<Page>> {
+    const document = await this.getDocumentFromURL(chapter.id);
+    return {
+      hasNextPage: false,
+      entries: this.getPagesFromDocument(document),
+    }
   }
 }
 

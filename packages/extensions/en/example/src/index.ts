@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import {injectable} from 'tsyringe';
 import {
+  Page,
   Chapter, 
   Cursor, 
   PageInfo, 
@@ -16,16 +17,16 @@ class ExampleSource implements PublicationSource {
 
   public name: string = 'Example';
 
-  async popular(cursor: Cursor): Promise<PageInfo> {
+  async popular(cursor: Cursor): Promise<PageInfo<Publication>> {
     const offset = (cursor.page - 1) * cursor.perPage;
     const publications: Publication[] = data.publications.slice(offset, cursor.perPage);
-    return <PageInfo> {
+    return <PageInfo<Publication>> {
       hasNextPage: publications.length < cursor.perPage,
       entries: publications,
     };
   }
 
-  search(query: string, cursor: Cursor): Promise<PageInfo> {
+  search(query: string, cursor: Cursor): Promise<PageInfo<Publication>> {
     throw new Error('Method not implemented.');
   }
 
@@ -37,7 +38,7 @@ class ExampleSource implements PublicationSource {
     throw new Error('Method not implemented.');
   }
   
-  pages(chapter: Chapter, pub: Publication, cursor: Cursor): Promise<string> {
+  pages(chapter: Chapter, pub: Publication, cursor: Cursor): Promise<PageInfo<Page>> {
     throw new Error('Method not implemented.');
   }
 }

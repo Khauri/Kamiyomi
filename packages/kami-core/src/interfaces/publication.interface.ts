@@ -1,7 +1,6 @@
 import {Chapter} from "./chapter.interface";
-import {Entry} from "./pagination.interface";
 
-export interface Publication extends Entry {
+export interface Publication {
   url: string;
   title: string;
   thumbnailUrl: string;

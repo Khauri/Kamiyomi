@@ -1,13 +1,9 @@
-export interface Entry {
-  id?: string;
-}
-
 export interface Cursor {
   page: number;
   perPage: number;
 }
 
-export interface PageInfo {
+export interface PageInfo<T> {
   hasNextPage: boolean;
-  entries: Entry[];
+  entries: T[];
 }
