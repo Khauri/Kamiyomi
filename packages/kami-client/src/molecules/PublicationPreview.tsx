@@ -12,7 +12,7 @@ function PublicationThumbnail({src, title}: any) {
 
 function PublicationPreview({thumbnailUrl, title}: any) {
   return (
-    <Box minWidth="50%" p={1} position="relative">
+    <Box minWidth={["50%", "33%", "25%", "16.5%"]} p={1} position="relative">
       <AspectRatio borderRadius="sm" overflow="hidden" ratio={9/13} bg="white" position="relative">
         <PublicationThumbnail src={thumbnailUrl} title={title} />
       </AspectRatio>

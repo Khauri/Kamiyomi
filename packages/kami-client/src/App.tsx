@@ -3,11 +3,9 @@ import {QueryClient, QueryClientProvider} from 'react-query'
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import PageLayout from './layouts/PageLayout';
 
-import Home from './routes/Home';
-import PublicationPage from './routes/Publication';
-import PublicationViewerPage from './routes/PublicationViewer';
-import PublicationSourcePage from './routes/Source';
-import PublicationSourcesPage from './routes/Sources';
+import HomePage from './routes/Home';
+import SettingsPage from './routes/Settings';
+import BrowsePage from './routes/Sources';
 
 const queryClient = new QueryClient()
 
@@ -17,12 +15,9 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<PageLayout />}>
-            <Route index element={<Home />} />
-            {/* Sources (maybe simplify?) I also want some kind of stack routing, so unsure about nested structure */}
-            <Route path="sources" element={<PublicationSourcesPage />} />
-            <Route path="sources/:source" element={<PublicationSourcePage />}/>
-            <Route path="sources/:source/publications/:publication" element={<PublicationPage />} />
-            <Route path="sources/:source/publications/:publication/chapters/:chapter" element={<PublicationViewerPage />} />
+            <Route index element={<HomePage />} />
+            <Route path="browse/*" element={<BrowsePage />} />
+            <Route path="settings/*" element={<SettingsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>
