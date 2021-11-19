@@ -31,7 +31,7 @@ export class SourcesService {
   }
 
   private cachePublications(...publications: Publication[]) {
-    console.log(publications);
+    // console.log(publications);
   }
 
   getSources(): PublicationSource[] {
