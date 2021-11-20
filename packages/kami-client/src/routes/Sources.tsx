@@ -1,7 +1,7 @@
-import React from 'react';
-import { Box, Container, Heading, Drawer, DrawerBody, DrawerOverlay, useDisclosure, DrawerContent} from '@chakra-ui/react';
+import React, { useEffect } from 'react';
+import { Box, Container, Heading, Drawer, DrawerOverlay, useDisclosure, DrawerContent} from '@chakra-ui/react';
 import { useQuery } from 'react-query';
-import { Link, Route, Routes, useNavigate } from 'react-router-dom';
+import { Link, Route, Routes, useNavigate, useMatch } from 'react-router-dom';
 import PublicationSourcePage from './Source';
 import PublicationPage from './Publication';
 import PublicationViewerPage from './PublicationViewer';
@@ -31,14 +31,30 @@ function PublicationSources() {
   );
 }
 
-function AltLayout({children}: any) {
+function NavigationStack({children}: any) {
+  const {isOpen, onClose, onOpen} = useDisclosure({defaultIsOpen: false});
+  // Temporary becaues idrk how to do this otherwise
+  const match = useMatch('/browse/:anything_not_root/*');
+
   const navigate = useNavigate();
-  const {isOpen, onClose} = useDisclosure({defaultIsOpen: true, onClose: () => navigate(-1)});
+
+  const onBack = () => { 
+    navigate(-1);
+  };
+
+  useEffect(() => {
+    if(match) {
+      onOpen();
+    } else {
+      onClose();
+    }
+  }, [match]);
+
   return (
     <Drawer isOpen={isOpen} onClose={onClose} size="full">
       <DrawerOverlay />
       <DrawerContent>
-        <PageHeader title="Source" canNavigateBack onPressHeader={onClose}/>
+        <PageHeader title="Source" canNavigateBack onPressHeader={onBack}/>
         <Box flex={1} overflowX="auto">
           {children}
         </Box>
@@ -50,16 +66,20 @@ function AltLayout({children}: any) {
 function PublicationSourcesPage() {
   return (
     <>
-      <Routes>
-        <Route index element={<PublicationSources />}/>
-      </Routes>
-      <Routes>
-        <Route path=":source" element={
-          <AltLayout><PublicationSourcePage /></AltLayout>
-        }/>
-        <Route path=":source/publications/:publication" element={<PublicationPage />} />
-        <Route path=":source/publications/:publication/chapters/:chapter" element={<PublicationViewerPage />} />
-      </Routes>
+      <PublicationSources />
+      <NavigationStack>
+        <Routes>
+          <Route path=":source" element={
+            <PublicationSourcePage />
+          }/>
+          <Route path=":source/publications/:publication" element={
+            <PublicationPage />
+          } />
+          <Route path=":source/publications/:publication/chapters/:chapter" element={
+            <PublicationViewerPage />
+          } />
+        </Routes>
+      </NavigationStack>
     </>
   )
 }

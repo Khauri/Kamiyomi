@@ -1,22 +1,43 @@
 import React from 'react';
-import { Tabs, TabList, TabPanels, Tab, TabPanel, Center, Text} from "@chakra-ui/react"
+import { Tabs, TabList, TabPanels, Tab, TabPanel, Flex} from '@chakra-ui/react';
+import { useQuery } from 'react-query';
+import lib from '../services/lib';
+import ScrollView from '../atoms/ScrollView';
+import PublicationGrid from '../molecules/PublicationGrid';
 // import PublicationPreview from '../molecules/PublicationPreview';
 
 // This page shows you publications you have saved
 function HomePage() {
-  // TODO: Show library of saved publications (grab from indexedDB)
+  const {isLoading, data} = useQuery('library.favorites', async () => {
+    const result = await lib.getCategoriesAndPublications();
+    if(!result?.length) {
+      return [{id: 0, name: 'Default', publications: []}];
+    }
+    return result;
+  }, {refetchOnWindowFocus: false});
+
+  if(isLoading) return null;
+
   return (
     <Tabs>
       <TabList>
-        <Tab>Default</Tab>
+        {
+          data?.map(category => <Tab key={`panel-${category.id}`}>{category.name}</Tab>)
+        }
       </TabList>
 
       <TabPanels>
-        <TabPanel px={0}>
-          <Center>
-            <Text color="gray.500">Nothing to see here yet</Text>
-          </Center>
-        </TabPanel>
+        {
+          data?.map(category => 
+            ( 
+              <TabPanel key={`panel-${category.id}`} px={0}>
+                <ScrollView as={Flex} wrap="wrap">
+                  <PublicationGrid publications={category.publications}/>
+                </ScrollView>
+              </TabPanel>
+            )
+          )
+        }
       </TabPanels>
     </Tabs>
   );

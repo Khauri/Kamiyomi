@@ -1,18 +1,23 @@
 import React, {useEffect, useState} from 'react';
-import { Box } from '@chakra-ui/react';
+import { Box, forwardRef, BoxProps } from '@chakra-ui/react';
 import { useInView } from 'react-intersection-observer';
 
-const ScrollView = React.forwardRef(({children, onScrollToBottom, vertical = true, horizontal = false, ...rest}: any, ref: any) => {
+const ScrollView = forwardRef<BoxProps, 'div'>(({children, onScrollToBottom, isFetchingNextPage = false, vertical = true, horizontal = false, ...rest}: any, ref: any) => {
   const { ref: vRef, inView } = useInView({
     rootMargin: '400px 400px',
     threshold: 0,
+    initialInView: false,
+    delay: 1000
   });
   const [isScrolledToBottom, setIsScrolledToBottom] = useState(false);
 
   useEffect(() => {
     if(inView && !isScrolledToBottom) {
-      onScrollToBottom?.();
       setIsScrolledToBottom(true);
+      if(isFetchingNextPage) {
+        return;
+      }
+      onScrollToBottom?.();
     } else if(!inView) {
       setIsScrolledToBottom(false);
     }

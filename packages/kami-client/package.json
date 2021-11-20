@@ -13,6 +13,7 @@
     "@types/node": "^12.20.37",
     "@types/react": "^17.0.34",
     "@types/react-dom": "^17.0.11",
+    "dexie": "^3.2.0",
     "framer-motion": "^4.1.17",
     "mobx-react-lite": "^3.2.2",
     "react": "^17.0.2",
